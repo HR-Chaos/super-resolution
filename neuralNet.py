@@ -5,7 +5,7 @@ import torch.nn.functional as F
 
 
 class ResidualBlock(nn.Module):
-    def __init__(self,in_channels=128, out_channels=128, kernel_size=3, stride=1, padding=1):
+    def __init__(self,in_channels=48, out_channels=48, kernel_size=3, stride=1, padding=1):
         super(ResidualBlock, self).__init__()
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding),
@@ -33,7 +33,7 @@ class NeuralNet(nn.Module):
     num_scale: number of upscaling iterations
     block_size: size of the block for the residual block
     '''
-    def __init__(self, scale_factor=2, num_scale=2, block_size=4):
+    def __init__(self, scale_factor=4, num_scale=1, block_size=4):
         super(NeuralNet, self).__init__()
         self.scale_factor = scale_factor
         self.num_scale = num_scale
@@ -41,35 +41,19 @@ class NeuralNet(nn.Module):
 
         # first convolutional layer
         self.conv1 = nn.Sequential(
-            nn.Conv2d(in_channels=3, out_channels=64, kernel_size=9, stride=1, padding=4),
+            nn.Conv2d(in_channels=3, out_channels=48, kernel_size=3, stride=1, padding=1),
             nn.PReLU(),
-            nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=1),
+            nn.Conv2d(in_channels=48, out_channels=48, kernel_size=3, stride=1, padding=1),
             nn.PReLU(),
-            nn.BatchNorm2d(128)
+            nn.BatchNorm2d(48)
         )
 
         # residual layers
-        self.residual2 = self.make_layer(ResidualBlock, self.block_size)
+        self.residual = self.make_layer(ResidualBlock, self.block_size)
 
         # upscaling layer
-        self.upscale1 = nn.Sequential(
+        self.upscale = nn.Sequential(
             nn.PixelShuffle(self.scale_factor),
-            nn.Conv2d(in_channels=32, out_channels=64, kernel_size=9, stride=1, padding=4)
-        )
-
-        self.conv2 = nn.Sequential(
-            nn.Conv2d(in_channels=64, out_channels=64, kernel_size=9, stride=1, padding=4),
-            nn.PReLU(),
-            nn.Conv2d(in_channels=64, out_channels=128, kernel_size=3, stride=1, padding=1),
-            nn.PReLU(),
-            nn.BatchNorm2d(128)
-        )
-
-        self.residual2 = self.make_layer(ResidualBlock, self.block_size)
-
-        self.upscale2 = nn.Sequential(
-            nn.PixelShuffle(self.scale_factor),
-            nn.Conv2d(in_channels=32, out_channels=3, kernel_size=9, stride=1, padding=4), 
             nn.Tanh()
         )
     
