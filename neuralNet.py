@@ -9,13 +9,13 @@ class ResidualBlock(nn.Module):
         super(ResidualBlock, self).__init__()
         self.conv1 = nn.Sequential(
             nn.Conv2d(in_channels=in_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding),
+            nn.BatchNorm2d(out_channels),
             nn.PReLU()
         )
 
         self.conv2 = nn.Sequential(
             nn.Conv2d(in_channels=out_channels, out_channels=out_channels, kernel_size=kernel_size, stride=stride, padding=padding),
-            nn.BatchNorm2d(out_channels),
-            nn.PReLU()
+            nn.BatchNorm2d(out_channels)
         )
 
     def forward(self, x):
@@ -53,7 +53,6 @@ class NeuralNet(nn.Module):
 
         # upscaling layer
         self.upscale1 = nn.Sequential(
-            # add conv layer
             nn.PixelShuffle(self.scale_factor),
             nn.Conv2d(in_channels=32, out_channels=64, kernel_size=9, stride=1, padding=4)
         )
