@@ -35,7 +35,7 @@ hr_image_files = [f for f in os.listdir(hr_images_dir) if os.path.isfile(os.path
 random.shuffle(hr_image_files)
 
 # Move HR and LR image pairs to the corresponding directories
-train_files = hr_image_files[:60000]
+train_files = hr_image_files[:100]
 
 for file_name in train_files:
     hr_src_path = os.path.join(hr_images_dir, file_name)
@@ -47,7 +47,7 @@ for file_name in train_files:
     shutil.move(hr_src_path, hr_dst_path)
     shutil.move(lr_src_path, lr_dst_path)
 
-val_files = hr_image_files[60000:64000]
+val_files = hr_image_files[100:150]
 
 for file_name in val_files:
     hr_src_path = os.path.join(hr_images_dir, file_name)
@@ -59,7 +59,7 @@ for file_name in val_files:
     shutil.move(hr_src_path, hr_dst_path)
     shutil.move(lr_src_path, lr_dst_path)
 
-for file_name in hr_image_files[64000:]:
+for file_name in hr_image_files[150:170]:
     hr_src_path = os.path.join(hr_images_dir, file_name)
     hr_dst_path = os.path.join(hr_test_dir, file_name)
     lr_file_name = f"downscaled_ci_{file_name}"
