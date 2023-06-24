@@ -31,4 +31,6 @@ class VGGLoss(nn.Module):
             x = layer(x)
             if name in self.layer_name_mapping:
                 features.append(x)
+                if name == '20':
+                    break
         return features
