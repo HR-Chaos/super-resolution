@@ -46,6 +46,7 @@ class NeuralNet(nn.Module):
             nn.Conv2d(in_channels=96, out_channels=192, kernel_size=3, stride=1, padding=1),
             nn.BatchNorm2d(192),
             nn.ReLU()
+            
         )
 
         # residual layers
