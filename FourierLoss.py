@@ -59,22 +59,21 @@ class BandFilterLoss():
         return loss
     
 class FourierHeatMap():
-    def __call__(self, target, generated,learning=True):
-        return self.fourier_loss(target, generated,learning)
+    def __call__(self, target, generated):
+        return self.fourier_loss(target, generated)
     
-    def fourier_spectra(self,img,learning):
-        if learning: #assuming need to swap CHW to HWC
-            img = np.transpose(img,(1,2,0))
+    def fourier_spectra(self,img):
         spectra = np.zeros_like(img,dtype=float)
         for i in range(3):
-            channel = img[:,:,i]
-            map = np.fft.fftshift(np.fft.fft2(channel))
-            spectra[:,:,i] = np.log(np.abs(map))
+            channel = img[i,:,:]
+            # map = np.fft.fftshift(np.fft.fft2(channel))
+            map = np.fft.fft2(channel)
+            spectra[i,:,:] = np.log(np.abs(map))
         return spectra
     
-    def fourier_loss(self, target,generated,learning):
-        target_spectra = self.fourier_spectra(target,learning)
-        generated_spectra = self.fourier_spectra(generated,learning)
+    def fourier_loss(self, target,generated):
+        target_spectra = self.fourier_spectra(target)
+        generated_spectra = self.fourier_spectra(generated)
         difference_spectra = target_spectra-generated_spectra
         # difference_spectra/=np.max(difference_spectra)
         return np.mean(difference_spectra**2)
