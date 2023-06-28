@@ -1,9 +1,8 @@
 import torch
-import torch.fft
 import numpy as np
 import cv2
 import matplotlib.pyplot as plt
-from torchvision.transforms import functional as F
+import torch.nn.functional as F
 
 class BandFilterLoss():
     def __init__(self, r1, r2):
@@ -78,10 +77,23 @@ class FourierHeatMap():
         # difference_spectra/=np.max(difference_spectra)
         return np.mean(difference_spectra**2)
     
+class FourierLossTorch(torch.nn.Module):
+    def __init__(self):
+        super(FourierLossTorch, self).__init__()
+        
+    def forward(self, target, generated):
+        target_fft = torch.fft.fftn(target, dim=(-3,-2,-1))
+        generated_fft = torch.fft.fftn(generated, dim=(-3,-2,-1))
+        
+        diff = target_fft - generated_fft
+        loss = F.mse_loss(diff.real/256, torch.zeros_like(diff.real)) + F.mse_loss(diff.imag/256, torch.zeros_like(diff.imag))
+        return loss 
+    
+    
 
 class BandFilterLossTorch(torch.nn.Module):
     def __init__(self, r1, r2):
-        super().__init__()
+        super(BandFilterLossTorch, self).__init__()
         self.r1 = r1
         self.r2 = r2
 
