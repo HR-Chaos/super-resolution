@@ -91,9 +91,14 @@ class FourierLossTorch(torch.nn.Module):
         
     def forward(self,target, generated):
         diff = torch.fft.fft2(target-generated)
-        diff = torch.log(torch.abs(diff))
-        # diff /=torch.max(diff)#scale down to 0,-1 to be consitent with other loss
-        return F.mse_loss(diff, torch.zeros_like(diff))
+        # diff = torch.log(torch.abs(diff))
+        diff = diff.real**2 + diff.imag**2
+        # diff /=torch.max(diff)#scale down to 0,1 to be consitent with other loss
+        # print("Min,Max of Diff:",torch.min(diff).item(),torch.max(diff).item())
+        # diff = diff #scale down to 0,1 (ish)
+        # loss = torch.log(F.mse_loss(diff, torch.zeros_like(diff)))/16
+        loss = torch.log(torch.mean(diff))
+        return loss
 
 class BandFilterLossTorch(torch.nn.Module):
     def __init__(self, r1, r2):
