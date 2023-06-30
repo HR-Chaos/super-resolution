@@ -31,11 +31,9 @@ def upscale_image_bicubic(image, scale_factor):
 
     # Calculate the new dimensions
     width, height = image.size
-    new_width = width * scale_factor
-    new_height = height * scale_factor
 
     # Use bicubic interpolation to upscale the image
-    upscaled_image = image.resize((new_width, new_height), Image.BICUBIC)
+    upscaled_image = image.resize((width*scale_factor, height*scale_factor), Image.BICUBIC)
 
     # Return the upscaled image
     return upscaled_image
