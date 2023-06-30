@@ -26,7 +26,7 @@ class ResidualBlock(nn.Module):
         return F.relu(out)
 
 
-class NeuralNet(nn.Module):
+class NeuralNet1(nn.Module):
     '''
     Neural Network for Super Resolution
     scale_factor: upscaling factor for one iteration
@@ -34,7 +34,7 @@ class NeuralNet(nn.Module):
     block_size: size of the block for the residual block
     '''
     def __init__(self, scale_factor=4, num_scale=1, block_size=4):
-        super(NeuralNet, self).__init__()
+        super(NeuralNet1, self).__init__()
         self.scale_factor = scale_factor
         self.num_scale = num_scale
         self.block_size = block_size
