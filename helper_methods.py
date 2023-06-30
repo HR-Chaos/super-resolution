@@ -1,7 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
 import cv2
-from neuralNet1 import NeuralNet
+from neuralNet1 import NeuralNet1
 import torch
 import torch.nn as nn
 from torch import optim
