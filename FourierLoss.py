@@ -90,15 +90,25 @@ class FourierLossTorch(torch.nn.Module):
         super(FourierLossTorch, self).__init__()
         
     def forward(self,target, generated):
-        diff = torch.fft.fft2(target-generated)
+        input_fft = torch.fft.fft2(generated)
+        target_fft = torch.fft.fft2(target)
+        # Compute the loss in the Fourier domain separately for real and imaginary parts
+        loss_real = F.mse_loss(input_fft.real, target_fft.real)
+        loss_imag = F.mse_loss(input_fft.imag, target_fft.imag)
+
+        # Combine the losses (avg)
+        loss = (loss_real + loss_imag) / 2
+
+        # diff = torch.fft.fft2(target-generated)
         # diff = torch.log(torch.abs(diff))
-        diff = diff.real**2 + diff.imag**2
+        # diff = diff.real**2 + diff.imag**2
         # diff /=torch.max(diff)#scale down to 0,1 to be consitent with other loss
         # print("Min,Max of Diff:",torch.min(diff).item(),torch.max(diff).item())
         # diff = diff #scale down to 0,1 (ish)
         # loss = torch.log(F.mse_loss(diff, torch.zeros_like(diff)))/16
-        loss = torch.log(torch.mean(diff))
+        # loss = torch.log(torch.mean(diff))
         return loss
+
 
 class BandFilterLossTorch(torch.nn.Module):
     def __init__(self, r1, r2):
