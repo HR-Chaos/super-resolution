@@ -14,6 +14,7 @@ from torch.utils.data import DataLoader
 from scipy.ndimage import convolve
 from FourierLoss import BandFilterLoss, BandFilterLossTorch, FourierHeatMap,FourierLossTorch
 from scipy.stats import multivariate_normal
+from scipy.spatial.distance import cosine
 
 def upscale_image_bicubic(image, scale_factor):
     if isinstance(image, str):
@@ -37,3 +38,19 @@ def upscale_image_bicubic(image, scale_factor):
 
     # Return the upscaled image
     return upscaled_image
+
+def cosine_similarity(image1, image2):
+    #image1 & 2 are numpy nd arrays
+    
+    flat_array1 = image1.flatten()
+    flat_array2 = image2.flatten()
+    
+    # Normalize feature vectors
+    normalized_array1 = flat_array1 / 255.0
+    normalized_array2 = flat_array2 / 255.0
+
+    # Calculate cosine similarity
+    similarity = 1 - cosine(normalized_array1, normalized_array2)
+
+    return similarity
+    
